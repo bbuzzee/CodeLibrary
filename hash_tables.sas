@@ -28,11 +28,11 @@ datalines;
 run;
 
 data plans123;
-input plan_id $ plan_desc $;
+input plan_id $ plan_desc $ 11.;
 datalines;
 ABC UMASS HMO
 DEF Harvard PPO
-WTF MIT PPO
+GHI MIT PPO
 ;
 run;
 
