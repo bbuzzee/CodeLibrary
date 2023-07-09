@@ -5,7 +5,7 @@ Useful R and SAS code/functions for the analysis of insurance claims data. Each 
 ##### **R**
 
   - **accumulate.R** This is an application of the accumulate() function from the purrr package that creates a cumulative variable (often of time) that resets after a certain amount of time accumulates. Originally used to identify birth-related encounters that were 6 months apart.
-  - **time_since_event_dt.R** Creates a variable that represents how much time (days) has
+  - **time_since_event.R** Creates a variable that represents how much time (days) has
   occurred since the last event takes place using data.table's nafill() function. OG purpose: Calculate the time since an opioid use disorder encounter for OUD patients.
 
 ##### **SAS**
