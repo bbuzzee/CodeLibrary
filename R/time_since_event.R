@@ -1,13 +1,12 @@
 # time-since-event
 
 # The goal of this script is to create a new variable in our dataset
-# that represents the time since an event has occurred
-
+# that represents the time since the most recent "event" has occurred
+# where an "event" can be anything represented by an indicator variable
 
 library(lubridate)
 library(data.table)
 library(tidyverse)
-
 
 #=====================
 # Create dummy data
@@ -19,13 +18,14 @@ df <- data.frame(id = rep(1:2, each = 10),
                  date = 20200101:20200120,
                  event_indicator = rep(0, times = 20))
 
+# add event occurrences
 df$event_indicator[c(5, 15, 18)] <- 1
 
 head(df)
 
 #=============================================
 # Step 1: Create a variable that is the date 
-# when the event occurs and missing otherwise
+# when the event occurs and missing otherwise.
 # Note: This only seems to work for integer dates
 #=============================================
 
@@ -41,17 +41,16 @@ dt <- setDT(df)[, last_event_date := (nafill(event_date, "locf")), by = id]
 
 
 #========================================================
-# Step 3: Convert to dates using lubridate then subtract
+# Step 3: Convert integer dates to a date format using lubridate, then subtract
 #========================================================
 
 dt$date <- ymd(dt$date)
 dt$last_event_date <- ymd(dt$last_event_date)
 
-
 time_since_event_dt <- new_dt[, time_since_last_event := date - last_event_date,]
 
 #=====================================================
-# Now our final dataset has a variable that tracks how
-# long it's been since the last event, and NA values
+# Now our final dataset time_since_event_dt, has a variable that tracks how
+# long it's been since the last event, where NA values
 # indicate that an event has not occurred yet.
 #======================================================
