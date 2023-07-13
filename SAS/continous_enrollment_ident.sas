@@ -55,17 +55,21 @@ run;
 proc print data=mbsf;
 run;
 
-
-data were_enrlld;
-	cont_enrlled = 0;
+/* enlled_one is an indicator for if they were enrolled that month
+   enrlled_all is numeric value for how many months they were enrolled*/
+data enroll_status;
+	enrlled_one = 0;
+	enrlled_all = 0;
 	set mbsf (WHERE=(ESRD_IND NE 'Y'));
 
 	array enrolled [*] MDCR_ENTLMT_BUYIN_IND_01 - MDCR_ENTLMT_BUYIN_IND_02;
  		do i=1 to dim(enrolled);
- 			if enrolled [i] = 3 then cont_enrlled = 1;
+ 			if enrolled [i] = 3 then enrlled_one = 1;
+			if enrolled [i] = 3 then enrlled_all = enrlled_all + 1;
 	end;
+ /* Set condition to delete unwanted observations here, such as IF X then DELETE */
+
 run;
 
-proc print data=were_enrlld;
+proc print data=enroll_status;;
 run;
-
