@@ -13,4 +13,4 @@ Useful R and SAS code/functions for the analysis of insurance claims data. Each 
 ##### **SAS**
  - **proc_sql_into** This script extracts a variable from a data set and turns it into a macro variable. Originally used when we had an indicator that a medication code was used for a certain reason in one data set and we wanted to search another data set for observations with those same codes.
 - **hasg_tables.sas** Explores SAS's hash table functions
-- **PCP Attribution.sas Attributes patients (bene_id) to the primary care physician (rfring_npi) they had the most encounters with during a calendar year.
+- **PCP Attribution.sas** Attributes patients (bene_id) to the primary care physician (rfring_npi) they had the most encounters with during a calendar year.
