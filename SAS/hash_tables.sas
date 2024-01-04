@@ -87,3 +87,23 @@ run;
 proc print data=both;
 run;
 
+
+
+/*=====================*/
+/* Code Snippet from Liz
+/*=====================*/
+
+data medenr.filtered_claims_inpatient;
+    set taf.taf_inpatient_header_2019 (obs=10000000);
+    keep bene_id state_cd clm_id SUBMTG_STATE_CD clm_type_cd wvr_type_cd srvc_bgn_dt srvc_end_dt dschrg_dt
+dgns_cd_1-dgns_cd_12 hosp PRCDR_CD_1-PRCDR_CD_6 PRCDR_CD_SYS_1-PRCDR_CD_SYS_6;
+    /* Define the hash table */
+    if _N_ = 1 then do;
+        declare hash h(dataset:'medenr.oud');
+        h.defineKey('bene_id');
+        h.defineData('bene_id'); /* Just to complete the definition */
+        h.defineDone();
+    end;
+    /* Check if bene_id is in the hash table */
+    if h.find() = 0;
+run;
