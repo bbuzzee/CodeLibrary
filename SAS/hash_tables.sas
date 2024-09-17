@@ -41,18 +41,18 @@ run;
  eof2 = end of dataset 2 */
 data all; 
  declare Hash Plan (); 					/* declare the Hash table and call it Plan */ 
- 	rc = plan.DefineKey ('plan_id'); 	/* identify fields to use as keys */
- 	rc = plan.DefineData ('plan_desc'); /* identify fields to use as data */ 
+ 	rc = plan.DefineKey ('plan_id'); 		/* identify fields to use as keys */
+ 	rc = plan.DefineData ('plan_desc'); 		/* identify fields to use as data */ 
  	rc = plan.DefineDone ();			/* complete hash table definition */
 
- do until (eof1); 					    /* loop to read records from Plan */
- set plans123 end = eof1; 			    /* eof1 is a numeric variable initialized to 0 and set to 1 when the last observation is read */
-  rc = plan.add();						/* add each record of plans_desc to the hash table - no conditions*/
+ do until (eof1); 					/* loop to read records from Plan */
+ set plans123 end = eof1; 			    	/* eof1 is a numeric variable initialized to 0 and set to 1 when the last observation is read */
+  rc = plan.add();					/* add each record of plans_desc to the hash table - no conditions*/
  end;                             
 
- do until (eof2); 					    /* loop to read records from Members */ 
+ do until (eof2); 					 /* loop to read records from Members */ 
  set members end = eof2; 
-  call missing(plan_desc); 			    /* initialize the variable we intend to fill */
+  call missing(plan_desc); 			    	/* initialize the variable we intend to fill */
   rc = plan.find (); 					/* lookup each plan_id in hash Plan */ 
  output; 								/* write record to Both */ 
  end;
@@ -71,16 +71,16 @@ data both (drop=rc);
  	rc = plan.DefineData ('plan_desc'); 
  	rc = plan.DefineDone ();			
 
- do until (eof1) ; 					    /* loop to read records from Plan */
- set plans_desc end = eof1; 			/* eof1 is a numeric variable that gets set to 1 when the last observation is read */
+ do until (eof1) ; 					/* loop to read records from Plan */
+ set plans_desc end = eof1; 				/* eof1 is a numeric variable that gets set to 1 when the last observation is read */
   rc = plan.add (); 					/* add each record pf plans_desc to the hash table - no conditions */
  end; 
 
- do until (eof2); 					    /* loop to read records from Members */ 
+ do until (eof2); 					/* loop to read records from Members */ 
  set members end = eof2; 
   rc = plan.find(); 					/* lookup each plan_id in the hash table Plan */ 
   if rc = 0 then output;				/* write record to Both only if the hash key is found in the members table (rc = plan.find() = 0 */ 
- end; 									/* Note: since we only output matches, we don't need to initialize plan_desc to missing as above */
+ end; 							/* Note: since we only output matches, we don't need to initialize plan_desc to missing as above */
  stop; 
 run; 
 
@@ -164,3 +164,66 @@ if ddiab.find() = 0 then output;
 end;
 stop;
 run;
+
+
+/*========================== */
+/* Carrier File Example      */
+/*========================== */
+
+data schiz_dx_cds;
+	input code $ diagnosis $;
+	datalines;
+	F20		schizophrenia
+	F22		schiz_spectrum;
+run;
+
+
+
+
+
+data carrier_schiz_hash;
+
+/* initialize variables in HASH table */
+
+ length BENE_ID $ 20;   
+
+/* Define Hash table with diabetes NDC code list */
+ 
+	dcl hash schiz_ids (ordered: "a") ;  
+	ddiab.DefineKey  ("BENE_ID") ;
+	ddiab.DefineData ("BENE_ID") ;
+	ddiab.DefineDone () ;
+
+do until (eof1);
+
+set 
+	carrier_file_1
+
+end = eof1
+;
+
+/* if the key (ie, PROD_SRVC_ID) can be found in the 
+Part D datasets, then output */
+
+if schiz_ids.find() = 0 then output;
+
+/* end the read-in loop */
+end;
+stop;
+run;
+
+
+data rxclaims_diabcodes_wherestat;
+set 
+	pde2014.pde_demo_2014_01 pde2014.pde_demo_2014_02
+	pde2014.pde_demo_2014_03 pde2014.pde_demo_2014_04 
+	pde2014.pde_demo_2014_05 pde2014.pde_demo_2014_06 
+	pde2014.pde_demo_2014_07 pde2014.pde_demo_2014_08 
+	pde2014.pde_demo_2014_09 pde2014.pde_demo_2014_10 
+	pde2014.pde_demo_2014_11 pde2014.pde_demo_2014_12 
+;
+where PROD_SRVC_ID in ("&dndclist");
+
+run;
+
+
